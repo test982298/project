@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { ChevronDown, ChevronUp } from 'lucide-react' // ✅ Removed 'X' import
+import { ChevronDown, ChevronUp } from 'lucide-react' 
 
 interface ChannelData {
   name: string
