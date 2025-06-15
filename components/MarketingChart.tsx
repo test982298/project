@@ -14,9 +14,17 @@ interface MarketingChartProps {
   totals: number[]
   className?: string
   onViewDetails?: () => void
+  digitalChannelData?: { name: string; value: number }[]
 }
 
-export function MarketingChart({ channels, stages, totals, className = '', onViewDetails }: MarketingChartProps) {
+export function MarketingChart({ 
+  channels, 
+  stages, 
+  totals, 
+  className = '', 
+  onViewDetails,
+  digitalChannelData = []
+}: MarketingChartProps) {
   const [hoveredPoint, setHoveredPoint] = useState<{
     channel: string
     value: number
@@ -49,17 +57,23 @@ export function MarketingChart({ channels, stages, totals, className = '', onVie
 
   const xStep = plotWidth / (stages.length - 1)
 
-  // Y-axis goes from 0 to 100
+  // Find max value for Y-axis scaling
+  const maxValue = Math.max(
+    ...channelArray.flatMap(channel => channel.data),
+    ...totals
+  )
+  const yAxisMax = Math.ceil(maxValue / 100) * 100 // Round up to nearest 100
+
   const getY = (value: number) => {
-    return padding.top + plotHeight - (value / 100) * plotHeight
+    return padding.top + plotHeight - (value / yAxisMax) * plotHeight
   }
 
   const getX = (index: number) => {
     return padding.left + index * xStep
   }
 
-  // Y-axis grid lines for 0-100 scale
-  const yAxisValues = [0, 20, 40, 60, 80, 100]
+  // Y-axis grid lines based on data range
+  const yAxisValues = Array.from({ length: 6 }, (_, i) => (yAxisMax / 5) * i)
 
   const handleMouseMove = (event: React.MouseEvent<SVGSVGElement>) => {
     // Don't show hover popup if there's a fixed point
@@ -256,7 +270,7 @@ export function MarketingChart({ channels, stages, totals, className = '', onVie
                 textAnchor="end"
                 className="text-xs fill-gray-500"
               >
-                {value}
+                {Math.round(value)}
               </text>
             </g>
           ))}
@@ -362,30 +376,12 @@ export function MarketingChart({ channels, stages, totals, className = '', onVie
               <h3 className="text-lg font-semibold text-gray-900 text-right">Digital Marketing Channels</h3>
             </div>
             <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-700">Webpage:</span>
-                <span className="text-sm font-semibold text-gray-900">156</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-700">Social Media:</span>
-                <span className="text-sm font-semibold text-gray-900">32</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-700">Email:</span>
-                <span className="text-sm font-semibold text-gray-900">16</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-700">SMS:</span>
-                <span className="text-sm font-semibold text-gray-900">35</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-700">Search:</span>
-                <span className="text-sm font-semibold text-gray-900">53</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-700">CPA:</span>
-                <span className="text-sm font-semibold text-gray-900">38</span>
-              </div>
+              {digitalChannelData.map((channel, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <span className="text-sm text-gray-700">{channel.name}:</span>
+                  <span className="text-sm font-semibold text-gray-900">{channel.value}</span>
+                </div>
+              ))}
             </div>
             <button
               onClick={handleViewDetailsClick}

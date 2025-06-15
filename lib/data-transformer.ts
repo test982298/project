@@ -107,6 +107,21 @@ export function transformMarketingData(apiData: any): {
     }
   }
 
+  // Find highest and lowest performing channels with actual data
+  const channelTotals = Object.keys(channelConfig).map(key => {
+    const data = extractChannelData(key)
+    const total = data.reduce((sum, val) => sum + val, 0)
+    return { key, name: channelConfig[key as keyof typeof channelConfig].name, total, data }
+  })
+
+  const highestChannel = channelTotals.reduce((max, channel) => 
+    channel.total > max.total ? channel : max
+  )
+  
+  const lowestChannel = channelTotals.reduce((min, channel) => 
+    channel.total < min.total ? channel : min
+  )
+
   // Create study to date data
   const studyToDate: TransformedMarketingData = {
     title: 'Marketing Channel Performance',
@@ -116,14 +131,14 @@ export function transformMarketingData(apiData: any): {
     totals: calculateTotals(),
     insights: {
       highest: {
-        channel: 'Partner & Recruitment Org',
-        metric: 'Secondary Pre-Screener conversion',
-        value: '357 participants (highest conversion rate)'
+        channel: highestChannel.name,
+        metric: 'Total recruitment performance',
+        value: `${highestChannel.total.toLocaleString()} participants (highest overall performance)`
       },
       lowest: {
-        channel: 'Other',
-        metric: 'Randomized completion',
-        value: '177 participants (lowest completion rate)'
+        channel: lowestChannel.name,
+        metric: 'Total recruitment performance',
+        value: `${lowestChannel.total.toLocaleString()} participants (lowest overall performance)`
       }
     }
   }
@@ -146,14 +161,14 @@ export function transformMarketingData(apiData: any): {
       totals: baseData.totals.map(total => Math.round(total * factor)),
       insights: {
         highest: {
-          channel: 'Digital Marketing',
-          metric: 'Secondary Pre-Screener conversion',
-          value: `${Math.round(379 * factor)} participants (highest conversion)`
+          channel: highestChannel.name,
+          metric: 'Total recruitment performance',
+          value: `${Math.round(highestChannel.total * factor).toLocaleString()} participants (highest performance)`
         },
         lowest: {
-          channel: 'Other',
-          metric: 'Randomized completion',
-          value: `${Math.round(177 * factor)} participants (lowest completion)`
+          channel: lowestChannel.name,
+          metric: 'Total recruitment performance',
+          value: `${Math.round(lowestChannel.total * factor).toLocaleString()} participants (lowest performance)`
         }
       }
     }
@@ -195,34 +210,34 @@ export function transformMarketingData(apiData: any): {
     { id: 'sms', name: 'SMS', checked: false }
   ]
 
-  // Extract digital channel details from the nested data
+  // Extract digital channel details from the nested data with actual values
   const digitalData = studyData.digitalMarketing.engagedWithCampaign
   const digitalChannelDetails: DigitalChannelDetails = {
     title: 'Digital Marketing Channels Breakdown',
     channels: [
       { 
         name: 'Webpage', 
-        value: Object.values(digitalData.webPage).reduce((sum: number, val: any) => sum + val, 0) 
+        value: Object.values(digitalData.webPage).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
       },
       { 
         name: 'Social Media', 
-        value: Object.values(digitalData.socialMedia).reduce((sum: number, val: any) => sum + val, 0) 
+        value: Object.values(digitalData.socialMedia).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
       },
       { 
         name: 'Email', 
-        value: Object.values(digitalData.email).reduce((sum: number, val: any) => sum + val, 0) 
+        value: Object.values(digitalData.email).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
       },
       { 
         name: 'SMS', 
-        value: Object.values(digitalData.sms).reduce((sum: number, val: any) => sum + val, 0) 
+        value: Object.values(digitalData.sms).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
       },
       { 
         name: 'Search', 
-        value: Object.values(digitalData.search).reduce((sum: number, val: any) => sum + val, 0) 
+        value: Object.values(digitalData.search).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
       },
       { 
         name: 'CPA', 
-        value: Object.values(digitalData.cpa).reduce((sum: number, val: any) => sum + val, 0) 
+        value: Object.values(digitalData.cpa).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
       }
     ]
   }

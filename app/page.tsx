@@ -161,6 +161,7 @@ export default function Home() {
               stages={currentData.stages}
               totals={currentData.totals}
               onViewDetails={handleViewDetails}
+              digitalChannelData={digitalChannelDetails?.channels || []}
             />
           </div>
 
