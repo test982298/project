@@ -228,6 +228,20 @@ export function MarketingChart({
     }
   }, [tooltipTimer])
 
+  // Get Digital Marketing channel data for the hovered stage
+  const getDigitalMarketingDataForStage = (stageIndex: number) => {
+    const digitalChannel = channels['digitalMarketing']
+    if (!digitalChannel) return null
+    
+    const stageValue = digitalChannel.data[stageIndex]
+    return {
+      channel: 'Digital Marketing',
+      value: stageValue,
+      stage: stages[stageIndex],
+      stageIndex
+    }
+  }
+
   return (
     <div className={`bg-white border border-gray-200 rounded-lg p-6 relative ${className}`}>
       {/* Legend */}
@@ -357,6 +371,42 @@ export function MarketingChart({
             )
           })}
         </svg>
+
+        {/* Hover Popup for Digital Marketing */}
+        {showHoverPopup && hoveredStageIndex !== null && channels['digitalMarketing'] && (
+          <div
+            ref={hoverPopupRef}
+            className="absolute bg-white border border-gray-200 rounded-lg shadow-lg p-4 z-30 min-w-80 pointer-events-auto"
+            style={{
+              left: `${hoverPopupPosition.x}px`,
+              top: `${hoverPopupPosition.y - 20}px`,
+              transform: 'translateX(-50%) translateY(-100%)',
+              minWidth: '320px',
+              maxWidth: '400px',
+            }}
+            onMouseEnter={handlePopupMouseEnter}
+            onMouseLeave={handlePopupMouseLeave}
+          >
+            <div className="mb-3">
+              <h3 className="text-lg font-semibold text-gray-900">Digital Marketing Channels</h3>
+              <p className="text-sm text-gray-600">{stages[hoveredStageIndex]}</p>
+            </div>
+            <div className="space-y-3">
+              {digitalChannelData.map((channel, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <span className="text-sm text-gray-700">{channel.name}:</span>
+                  <span className="text-sm font-semibold text-gray-900">{channel.value}</span>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={handleViewDetailsClick}
+              className="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white text-sm py-2 px-4 rounded-md transition-colors duration-200"
+            >
+              View Details
+            </button>
+          </div>
+        )}
 
         {/* Digital Marketing Overlay (when clicking View Details) */}
         {showTooltip && hoveredPoint && hoveredPoint.channel === 'Digital Marketing' && (
