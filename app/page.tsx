@@ -6,30 +6,7 @@ import { FilterDropdown } from '@/components/FilterDropdown'
 import { DigitalChannelModal } from '@/components/DigitalChannelModal'
 import { InsightCard } from '@/components/InsightCard'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-
-interface MarketingData {
-  title: string
-  subtitle: string
-  channels: Record<string, {
-    name: string
-    color: string
-    data: number[]
-  }>
-  stages: string[]
-  totals: number[]
-  insights?: {
-    highest: {
-      channel: string
-      metric: string
-      value: string
-    }
-    lowest: {
-      channel: string
-      metric: string
-      value: string
-    }
-  }
-}
+import { transformMarketingData, TransformedMarketingData } from '@/lib/data-transformer'
 
 interface FilterOption {
   id: string
@@ -38,8 +15,8 @@ interface FilterOption {
 }
 
 export default function Home() {
-  const [currentData, setCurrentData] = useState<MarketingData | null>(null)
-  const [allData, setAllData] = useState<Record<string, MarketingData>>({})
+  const [currentData, setCurrentData] = useState<TransformedMarketingData | null>(null)
+  const [allData, setAllData] = useState<Record<string, TransformedMarketingData>>({})
   const [channelFilters, setChannelFilters] = useState<FilterOption[]>([])
   const [digitalChannelDetails, setDigitalChannelDetails] = useState<{
     title: string
@@ -51,15 +28,18 @@ export default function Home() {
   useEffect(() => {
     fetch('/marketing-data.json')
       .then(response => response.json())
-      .then(data => {
+      .then(rawData => {
+        // Transform the complex API data into chart-friendly format
+        const transformedData = transformMarketingData(rawData)
+        
         setAllData({
-          studyToDate: data.studyToDate,
-          last7Days: data.last7Days,
-          last30Days: data.last30Days
+          studyToDate: transformedData.studyToDate,
+          last7Days: transformedData.last7Days,
+          last30Days: transformedData.last30Days
         })
-        setCurrentData(data.studyToDate)
-        setChannelFilters(data.channelFilters)
-        setDigitalChannelDetails(data.digitalChannelDetails)
+        setCurrentData(transformedData.studyToDate)
+        setChannelFilters(transformedData.channelFilters)
+        setDigitalChannelDetails(transformedData.digitalChannelDetails)
       })
       .catch(error => console.error('Error loading data:', error))
   }, [])
@@ -97,10 +77,10 @@ export default function Home() {
     const filterToChannelMap: Record<string, string> = {
       'webpage': 'digitalMarketing',
       'email': 'digitalMarketing', 
-      'directMail': 'directOfflineMarketing',
-      'partnershipMarketing': 'partnerRecruitmentOrg',
-      'onlineRecruitment': 'partnerRecruitmentOrg',
-      'offlineRecruitment': 'directOfflineMarketing',
+      'directMail': 'directAndOfflineMarketing',
+      'partnershipMarketing': 'partnerAndRecruitmentOrg',
+      'onlineRecruitment': 'partnerAndRecruitmentOrg',
+      'offlineRecruitment': 'directAndOfflineMarketing',
       'socialMedia': 'digitalMarketing',
       'sms': 'digitalMarketing'
     }

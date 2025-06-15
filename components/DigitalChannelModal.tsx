@@ -14,12 +14,14 @@ interface DigitalChannelModalProps {
   isOpen: boolean
   onClose: () => void
   title: string
+  channels: { name: string; value: number }[]
 }
 
 export function DigitalChannelModal({
   isOpen,
   onClose,
-  title
+  title,
+  channels
 }: DigitalChannelModalProps) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
 
@@ -27,22 +29,21 @@ export function DigitalChannelModal({
     setOpenSections(prev => ({ ...prev, [name]: !prev[name] }))
   }
 
-  const channels: ChannelData[] = [
-    { name: 'Webpage', value: 62 },
-    {
-      name: 'Social Media',
-      subChannels: [
-        { name: 'Facebook', value: 52 },
-        { name: 'Instagram', value: 43 },
-        { name: 'X', value: 20 }
-      ],
-      value: 0
-    },
-    { name: 'Email', value: 28 },
-    { name: 'SMS', value: 32 },
-    { name: 'Search', value: 14 },
-    { name: 'CPA', value: 5 }
-  ]
+  // Transform the channels data to include sub-channels for Social Media
+  const channelsWithSubChannels: ChannelData[] = channels.map(channel => {
+    if (channel.name === 'Social Media') {
+      return {
+        ...channel,
+        value: 0, // Parent value will be calculated from sub-channels
+        subChannels: [
+          { name: 'Facebook', value: 52 },
+          { name: 'Instagram', value: 43 },
+          { name: 'X', value: 20 }
+        ]
+      }
+    }
+    return channel
+  })
 
   const getTotal = (channel: ChannelData): number => {
     if (channel.subChannels) {
@@ -68,7 +69,7 @@ export function DigitalChannelModal({
 
         {/* Channel List */}
         <div className="px-4 py-3 space-y-2">
-          {channels.map(channel => {
+          {channelsWithSubChannels.map(channel => {
             const isOpen = openSections[channel.name] || false
             const total = getTotal(channel)
 
@@ -80,10 +81,14 @@ export function DigitalChannelModal({
                 >
                   {/* Left: Arrow + Name */}
                   <div className="flex items-center gap-2">
-                    {isOpen ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
+                    {channel.subChannels && (
+                      <>
+                        {isOpen ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        )}
+                      </>
                     )}
                     <span>{channel.name}</span>
                   </div>
@@ -93,21 +98,17 @@ export function DigitalChannelModal({
                 </div>
 
                 {/* Expandable Section */}
-                {isOpen && (
+                {isOpen && channel.subChannels && (
                   <div className="pl-6 pt-3 space-y-2">
-                    {channel.subChannels?.length ? (
-                      channel.subChannels.map(sub => (
-                        <div
-                          key={sub.name}
-                          className="flex justify-between items-center text-sm text-gray-800 px-3 py-2 bg-white rounded shadow-sm"
-                        >
-                          <span>{sub.name}</span>
-                          <span>{sub.value}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-sm text-gray-400 italic">No additional data</div>
-                    )}
+                    {channel.subChannels.map(sub => (
+                      <div
+                        key={sub.name}
+                        className="flex justify-between items-center text-sm text-gray-800 px-3 py-2 bg-white rounded shadow-sm"
+                      >
+                        <span>{sub.name}</span>
+                        <span>{sub.value}</span>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
