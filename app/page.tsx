@@ -21,6 +21,7 @@ export default function Home() {
   const [digitalChannelDetails, setDigitalChannelDetails] = useState<{
     title: string
     channels: { name: string; value: number }[]
+    stageData: Record<string, Record<string, { name: string; value: number }[]>>
   } | null>(null)
   const [selectedPeriod, setSelectedPeriod] = useState('studyToDate')
   const [showDigitalModal, setShowDigitalModal] = useState(false)
@@ -61,6 +62,23 @@ export default function Home() {
 
   const handleViewDetails = () => {
     setShowDigitalModal(true)
+  }
+
+  // Get current digital channel data based on selected period
+  const getCurrentDigitalChannelData = (stageName?: string) => {
+    if (!digitalChannelDetails) return []
+    
+    // If a specific stage is provided, get data for that stage
+    if (stageName && digitalChannelDetails.stageData) {
+      const periodKey = selectedPeriod
+      const stageData = digitalChannelDetails.stageData[periodKey]
+      return stageData?.[stageName] || []
+    }
+    
+    // Otherwise return default data for the current period
+    const periodKey = selectedPeriod
+    const stageData = digitalChannelDetails.stageData[periodKey]
+    return stageData?.['Engaged with Campaign'] || digitalChannelDetails.channels
   }
 
   // Filter channels based on selected filters
@@ -161,7 +179,8 @@ export default function Home() {
               stages={currentData.stages}
               totals={currentData.totals}
               onViewDetails={handleViewDetails}
-              digitalChannelData={digitalChannelDetails?.channels || []}
+              digitalChannelData={getCurrentDigitalChannelData()}
+              getCurrentDigitalChannelData={getCurrentDigitalChannelData}
             />
           </div>
 
@@ -198,7 +217,7 @@ export default function Home() {
           <DigitalChannelModal
             isOpen={showDigitalModal}
             onClose={() => setShowDigitalModal(false)}
-            channels={digitalChannelDetails.channels}
+            channels={getCurrentDigitalChannelData()}
             title={digitalChannelDetails.title}
           />
         )}

@@ -15,6 +15,7 @@ interface MarketingChartProps {
   className?: string
   onViewDetails?: () => void
   digitalChannelData?: { name: string; value: number }[]
+  getCurrentDigitalChannelData?: (stageName?: string) => { name: string; value: number }[]
 }
 
 export function MarketingChart({ 
@@ -23,7 +24,8 @@ export function MarketingChart({
   totals, 
   className = '', 
   onViewDetails,
-  digitalChannelData = []
+  digitalChannelData = [],
+  getCurrentDigitalChannelData
 }: MarketingChartProps) {
   const [hoveredPoint, setHoveredPoint] = useState<{
     channel: string
@@ -95,9 +97,10 @@ export function MarketingChart({
       }
     }
 
-    // Only show hover line if mouse is within the plot area
+    // Only show hover line if mouse is within the plot area and Digital Marketing channel exists
     if (mouseX >= padding.left && mouseX <= chartWidth - padding.right &&
-        mouseY >= padding.top && mouseY <= chartHeight - padding.bottom) {
+        mouseY >= padding.top && mouseY <= chartHeight - padding.bottom &&
+        channels['digitalMarketing']) {
       setHoverX(getX(closestIndex))
       setHoveredStageIndex(closestIndex)
       
@@ -240,6 +243,14 @@ export function MarketingChart({
       stage: stages[stageIndex],
       stageIndex
     }
+  }
+
+  // Get dynamic digital channel data for current stage
+  const getCurrentStageDigitalData = (stageIndex: number) => {
+    if (getCurrentDigitalChannelData) {
+      return getCurrentDigitalChannelData(stages[stageIndex])
+    }
+    return digitalChannelData
   }
 
   return (
@@ -392,7 +403,7 @@ export function MarketingChart({
               <p className="text-sm text-gray-600">{stages[hoveredStageIndex]}</p>
             </div>
             <div className="space-y-3">
-              {digitalChannelData.map((channel, index) => (
+              {getCurrentStageDigitalData(hoveredStageIndex).map((channel, index) => (
                 <div key={index} className="flex justify-between items-center">
                   <span className="text-sm text-gray-700">{channel.name}:</span>
                   <span className="text-sm font-semibold text-gray-900">{channel.value}</span>
@@ -424,9 +435,10 @@ export function MarketingChart({
           >
             <div className="mb-3">
               <h3 className="text-lg font-semibold text-gray-900 text-right">Digital Marketing Channels</h3>
+              <p className="text-sm text-gray-600 text-right">{hoveredPoint.stage}</p>
             </div>
             <div className="space-y-3">
-              {digitalChannelData.map((channel, index) => (
+              {getCurrentStageDigitalData(hoveredPoint.stageIndex).map((channel, index) => (
                 <div key={index} className="flex justify-between items-center">
                   <span className="text-sm text-gray-700">{channel.name}:</span>
                   <span className="text-sm font-semibold text-gray-900">{channel.value}</span>

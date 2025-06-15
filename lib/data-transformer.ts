@@ -32,6 +32,7 @@ export interface ChannelFilters {
 export interface DigitalChannelDetails {
   title: string
   channels: { name: string; value: number }[]
+  stageData: Record<string, { name: string; value: number }[]> // Add stage-specific data
 }
 
 // Transform the complex API response into chart-friendly format
@@ -210,36 +211,59 @@ export function transformMarketingData(apiData: any): {
     { id: 'sms', name: 'SMS', checked: false }
   ]
 
-  // Extract digital channel details from the nested data with actual values
-  const digitalData = studyData.digitalMarketing.engagedWithCampaign
-  const digitalChannelDetails: DigitalChannelDetails = {
-    title: 'Digital Marketing Channels Breakdown',
-    channels: [
+  // Helper function to extract digital channel data for a specific stage
+  const extractDigitalChannelDataForStage = (stageKey: string, factor: number = 1) => {
+    const digitalData = studyData.digitalMarketing[stageKey]
+    if (!digitalData) return []
+
+    return [
       { 
         name: 'Webpage', 
-        value: Object.values(digitalData.webPage).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
+        value: Math.round(Object.values(digitalData.webPage || {}).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) * factor)
       },
       { 
         name: 'Social Media', 
-        value: Object.values(digitalData.socialMedia).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
+        value: Math.round(Object.values(digitalData.socialMedia || {}).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) * factor)
       },
       { 
         name: 'Email', 
-        value: Object.values(digitalData.email).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
+        value: Math.round(Object.values(digitalData.email || {}).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) * factor)
       },
       { 
         name: 'SMS', 
-        value: Object.values(digitalData.sms).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
+        value: Math.round(Object.values(digitalData.sms || {}).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) * factor)
       },
       { 
         name: 'Search', 
-        value: Object.values(digitalData.search).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
+        value: Math.round(Object.values(digitalData.search || {}).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) * factor)
       },
       { 
         name: 'CPA', 
-        value: Object.values(digitalData.cpa).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) 
+        value: Math.round(Object.values(digitalData.cpa || {}).reduce((sum: number, val: any) => sum + (typeof val === 'number' ? val : 0), 0) * factor)
       }
     ]
+  }
+
+  // Create stage-specific data for all time periods
+  const createStageData = (factor: number = 1) => {
+    const stageData: Record<string, { name: string; value: number }[]> = {}
+    
+    stageKeys.forEach((stageKey, index) => {
+      stageData[stages[index]] = extractDigitalChannelDataForStage(stageKey, factor)
+    })
+    
+    return stageData
+  }
+
+  // Extract digital channel details from the nested data with actual values
+  const digitalChannelDetails: DigitalChannelDetails = {
+    title: 'Digital Marketing Channels Breakdown',
+    channels: extractDigitalChannelDataForStage('engagedWithCampaign'), // Default to first stage
+    stageData: {
+      'studyToDate': createStageData(1),
+      'last7Days': createStageData(0.15),
+      'last30Days': createStageData(0.55)
+    }
   }
 
   return {
