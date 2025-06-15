@@ -1,0 +1,147 @@
+{
+  "studyToDate": {
+    "title": "Study Marketing Recruitment",
+    "subtitle": "Specific marketing channels success across the recruitment funnel",
+    "channels": {
+      "digitalMarketing": {
+        "name": "Digital Marketing",
+        "color": "#00BCD4",
+        "data": [97, 94, 81, 89, 86, 64, 84, 85]
+      },
+      "directOfflineMarketing": {
+        "name": "Direct & Offline Marketing",
+        "color": "#009688",
+        "data": [55, 42, 33, 40, 43, 66, 44, 34]
+      },
+      "partnerRecruitmentOrg": {
+        "name": "Partner & Recruitment Org",
+        "color": "#6366F1",
+        "data": [34, 44, 20, 16, 26, 85, 28, 18]
+      },
+      "other": {
+        "name": "Other",
+        "color": "#FF9800",
+        "data": [32, 26, 22, 24, 12, 2, 18, 20]
+      }
+    },
+    "stages": [
+      "Engaged with Locate Campaign",
+      "Primary Pre-Screener Completed",
+      "Secondary Pre-Screener Completed",
+      "Released to Site",
+      "Initial Site Visit Scheduled",
+      "Initial Site Visit Completed", 
+      "Consented",
+      "Randomized"
+    ],
+    "totals": [384, 282, 291, 275, 230, 184, 145, 145],
+    "insights": {
+      "highest": {
+        "channel": "Google",
+        "metric": "Highest number of patients referred to site",
+        "value": "88 of 384"
+      },
+      "lowest": {
+        "channel": "CPA",
+        "metric": "Lowest number of patients referred to site", 
+        "value": "24 of 384"
+      }
+    }
+  },
+  "last7Days": {
+    "title": "Study Marketing Recruitment - Last 7 Days",
+    "subtitle": "Recent marketing channels performance",
+    "channels": {
+      "digitalMarketing": {
+        "name": "Digital Marketing",
+        "color": "#00BCD4",
+        "data": [45, 42, 38, 41, 39, 35, 38, 40]
+      },
+      "directOfflineMarketing": {
+        "name": "Direct & Offline Marketing", 
+        "color": "#009688",
+        "data": [25, 22, 18, 20, 21, 28, 22, 18]
+      },
+      "partnerRecruitmentOrg": {
+        "name": "Partner & Recruitment Org",
+        "color": "#6366F1", 
+        "data": [15, 18, 12, 8, 14, 32, 16, 10]
+      },
+      "other": {
+        "name": "Other",
+        "color": "#FF9800",
+        "data": [12, 10, 8, 9, 5, 1, 7, 8]
+      }
+    },
+    "stages": [
+      "Engaged with Locate Campaign",
+      "Primary Pre-Screener Completed", 
+      "Secondary Pre-Screener Completed",
+      "Released to Site",
+      "Initial Site Visit Scheduled",
+      "Initial Site Visit Completed",
+      "Consented", 
+      "Randomized"
+    ],
+    "totals": [97, 92, 76, 78, 79, 96, 83, 76]
+  },
+  "last30Days": {
+    "title": "Study Marketing Recruitment - Last 30 Days", 
+    "subtitle": "Monthly marketing channels performance",
+    "channels": {
+      "digitalMarketing": {
+        "name": "Digital Marketing",
+        "color": "#00BCD4",
+        "data": [88, 85, 75, 80, 78, 58, 76, 77]
+      },
+      "directOfflineMarketing": {
+        "name": "Direct & Offline Marketing",
+        "color": "#009688", 
+        "data": [48, 38, 30, 36, 39, 58, 40, 31]
+      },
+      "partnerRecruitmentOrg": {
+        "name": "Partner & Recruitment Org",
+        "color": "#6366F1",
+        "data": [30, 39, 18, 14, 23, 75, 25, 16]
+      },
+      "other": {
+        "name": "Other", 
+        "color": "#FF9800",
+        "data": [28, 23, 19, 21, 10, 1, 16, 18]
+      }
+    },
+    "stages": [
+      "Engaged with Locate Campaign",
+      "Primary Pre-Screener Completed",
+      "Secondary Pre-Screener Completed", 
+      "Released to Site",
+      "Initial Site Visit Scheduled",
+      "Initial Site Visit Completed",
+      "Consented",
+      "Randomized"
+    ],
+    "totals": [194, 185, 142, 151, 150, 192, 157, 142]
+  },
+  "channelFilters": [
+    { "id": "all", "name": "All Channels", "checked": true },
+    { "id": "webpage", "name": "Web Page", "checked": false },
+    { "id": "email", "name": "Email", "checked": false },
+    { "id": "directMail", "name": "Direct Mail", "checked": false },
+    { "id": "partnershipMarketing", "name": "Partnership Marketing", "checked": false },
+    { "id": "onlineRecruitment", "name": "Online Recruitment", "checked": false },
+    { "id": "offlineRecruitment", "name": "Offline Recruitment", "checked": false },
+    { "id": "socialMedia", "name": "Social Media", "checked": false },
+    { "id": "sms", "name": "SMS", "checked": false }
+  ],
+  "digitalChannelDetails": {
+    "title": "Digital Marketing Channels",
+    "channels": [
+      { "name": "Webpage", "value": 156 },
+      { "name": "Social Media", "value": 32 },
+      { "name": "Email", "value": 16 },
+      { "name": "SMS", "value": 35 },
+      { "name": "Search", "value": 53 },
+      { "name": "CPA", "value": 38 }
+    ]
+  }
+}
